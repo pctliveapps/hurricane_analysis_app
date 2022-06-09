@@ -1,8 +1,0 @@
-name: hurricane_streamlit
-channels:
-  - defaults
-dependencies:
-  - python=3.8
-  - fiona=1.8.19
-  - geopandas
-prefix: /Users/josh/miniconda/envs/hurricane_streamlit
