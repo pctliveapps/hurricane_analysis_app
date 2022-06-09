@@ -7,7 +7,7 @@ import folium
 import branca
 
 
-def generate_folium_map(df_fema=None, df_geo_area_to_render=None):
+def generate_folium_map(storm_conf, df_fema=None, df_geo_area_to_render=None):
 
 	t0 = time.time()
 
@@ -23,21 +23,21 @@ def generate_folium_map(df_fema=None, df_geo_area_to_render=None):
 
 	# build the feature groups
 
-	storm_name = "Michael"
-	storm_year = "2018"
+	storm_name = storm_conf['name']
+	storm_year = storm_conf['year']
 
 
-	feature_group_storm_path = folium.FeatureGroup(name=(storm_name + ' ' + storm_year + ' Storm Path'),overlay=True).add_to(us_map_geojson)
+	feature_group_storm_path = folium.FeatureGroup(name=(storm_name + ' ' + str(storm_year) + ' Storm Path'),overlay=True).add_to(us_map_geojson)
 
-	feature_group_storm_distance = folium.FeatureGroup(name=(storm_name + ' ' + storm_year + ' Storm County Distance'),overlay=False).add_to(us_map_geojson)
+	feature_group_storm_distance = folium.FeatureGroup(name=(storm_name + ' ' + str(storm_year) + ' Storm County Distance'),overlay=False).add_to(us_map_geojson)
 
-	feature_group_storm_wind_vmax_sustained = folium.FeatureGroup(name=(storm_name + ' ' + storm_year + ' VMAX Sustained'),overlay=False).add_to(us_map_geojson)
-	feature_group_storm_wind_vmax_gusts = folium.FeatureGroup(name=(storm_name + ' ' + storm_year + ' VMAX Gusts'),overlay=False).add_to(us_map_geojson)
+	feature_group_storm_wind_vmax_sustained = folium.FeatureGroup(name=(storm_name + ' ' + str(storm_year) + ' VMAX Sustained'),overlay=False).add_to(us_map_geojson)
+	feature_group_storm_wind_vmax_gusts = folium.FeatureGroup(name=(storm_name + ' ' + str(storm_year) + ' VMAX Gusts'),overlay=False).add_to(us_map_geojson)
 
-	feature_group_storm_wind_sustained_duration = folium.FeatureGroup(name=(storm_name + ' ' + storm_year + ' Sustained Duration'),overlay=False).add_to(us_map_geojson)
-	feature_group_storm_wind_gust_duration = folium.FeatureGroup(name=(storm_name + ' ' + storm_year + ' Gust Duration'),overlay=False).add_to(us_map_geojson)
+	feature_group_storm_wind_sustained_duration = folium.FeatureGroup(name=(storm_name + ' ' + str(storm_year) + ' Sustained Duration'),overlay=False).add_to(us_map_geojson)
+	feature_group_storm_wind_gust_duration = folium.FeatureGroup(name=(storm_name + ' ' + str(storm_year) + ' Gust Duration'),overlay=False).add_to(us_map_geojson)
 
-	feature_group_storm_flood_exposure = folium.FeatureGroup(name=(storm_name + ' ' + storm_year + ' Flood Exposure'),overlay=False).add_to(us_map_geojson)
+	feature_group_storm_flood_exposure = folium.FeatureGroup(name=(storm_name + ' ' + str(storm_year) + ' Flood Exposure'),overlay=False).add_to(us_map_geojson)
 
 
 
@@ -267,7 +267,12 @@ def generate_folium_map(df_fema=None, df_geo_area_to_render=None):
 	# save the map
 
 	folium.LayerControl().add_to(us_map_geojson)
-	us_map_geojson.save(outfile = "./maps/test/test_map.html")
+
+	strMapFilename = "./maps/test/test_map_" + str(storm_year) + "_" + storm_name + ".html"
+
+	us_map_geojson.save(outfile = strMapFilename)
+
+	print("Saved to disk: " + strMapFilename)
 
 	t1 = time.time()
 

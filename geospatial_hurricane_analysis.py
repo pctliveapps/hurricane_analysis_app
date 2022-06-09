@@ -12,8 +12,41 @@ import folium
 import geopandas as gpd
 
 
+storm_katrina = {
+    'name': 'Katrina',
+    'year': 2005,
+    'states': ["Louisiana", "Alabama", "Mississippi", "Arkansas", "Tennessee", "Kentucky"]
+}
 
-list_of_states_to_load = ["Virginia", "South Carolina", "North Carolina", "Georgia", "Alabama"] # , "Tennessee"
+storm_michael = {
+    'name': 'Michael',
+    'year': 2018,
+    'states': ["Florida", "South Carolina", "North Carolina", "Georgia", "Alabama"]
+}
+
+storm_sandy = {
+    'name': 'Sandy',
+    'year': 2012,
+    'states': ["New York", "New Jersey"]
+}
+
+storms = []
+storms.append( storm_katrina )
+storms.append( storm_michael )
+storms.append( storm_sandy )
+
+current_storm_index = 0
+
+current_storm = storms[ current_storm_index ]
+
+list_of_states_to_load = storms[ current_storm_index ]['states']
+
+strMapStormDataCSVFilename = "./data/hurricanes/" + str( current_storm['year'] ) + "_" + current_storm['name'] + "_all_raw_events_counties.csv"
+
+print("Current Storm: " + current_storm['name'] + ' ' + str( current_storm['year'] ) )
+
+
+#list_of_states_to_load = ["Virginia", "South Carolina", "North Carolina", "Georgia", "Alabama"] # , "Tennessee"
 
 strJSON_gdrive_path =  "./data/geo/georef-united-states-of-america-county.geojson"
 
@@ -66,7 +99,7 @@ print( geojson_online.head() )
 # now load the list of extracted hurricane data
 
 
-df_hurricane_all_data_counties = pd.read_csv( "./data/hurricanes/2018_Michael_all_raw_events_counties.csv" )
+df_hurricane_all_data_counties = pd.read_csv( strMapStormDataCSVFilename ) #"./data/hurricanes/2018_Michael_all_raw_events_counties.csv" )
 df_hurricane_all_data_counties = df_hurricane_all_data_counties.loc[:, ~df_hurricane_all_data_counties.columns.str.contains('^Unnamed')]
 
 
@@ -77,9 +110,9 @@ print( df_hurricane_all_data_counties.head() )
 
 df_geo_storm = df_geo.merge(df_hurricane_all_data_counties, how="left", right_on=["fips"], left_on=["coty_code"])
 
-df_geo_area_to_render = df_geo_storm[ df_geo_storm["ste_name"].isin(list_of_states_to_load) ]
+df_geo_area_to_render = df_geo_storm[ df_geo_storm["ste_name"].isin( list_of_states_to_load ) ]
 
 
 
-map_builder.generate_folium_map(None, df_geo_area_to_render)
+map_builder.generate_folium_map(current_storm, None, df_geo_area_to_render)
 
