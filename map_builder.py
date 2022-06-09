@@ -34,10 +34,12 @@ def generate_folium_map(storm_conf, df_fema=None, df_geo_area_to_render=None):
 	feature_group_storm_wind_vmax_sustained = folium.FeatureGroup(name=(storm_name + ' ' + str(storm_year) + ' VMAX Sustained'),overlay=False).add_to(us_map_geojson)
 	feature_group_storm_wind_vmax_gusts = folium.FeatureGroup(name=(storm_name + ' ' + str(storm_year) + ' VMAX Gusts'),overlay=False).add_to(us_map_geojson)
 
-	feature_group_storm_wind_sustained_duration = folium.FeatureGroup(name=(storm_name + ' ' + str(storm_year) + ' Sustained Duration'),overlay=False).add_to(us_map_geojson)
-	feature_group_storm_wind_gust_duration = folium.FeatureGroup(name=(storm_name + ' ' + str(storm_year) + ' Gust Duration'),overlay=False).add_to(us_map_geojson)
+	#feature_group_storm_wind_sustained_duration = folium.FeatureGroup(name=(storm_name + ' ' + str(storm_year) + ' Sustained Duration'),overlay=False).add_to(us_map_geojson)
+	#feature_group_storm_wind_gust_duration = folium.FeatureGroup(name=(storm_name + ' ' + str(storm_year) + ' Gust Duration'),overlay=False).add_to(us_map_geojson)
 
 	feature_group_storm_flood_exposure = folium.FeatureGroup(name=(storm_name + ' ' + str(storm_year) + ' Flood Exposure'),overlay=False).add_to(us_map_geojson)
+
+	feature_group_fema_damage = folium.FeatureGroup(name=(storm_name + ' ' + str(storm_year) + ' FEMA Damage'),overlay=False).add_to(us_map_geojson)
 
 
 
@@ -261,6 +263,69 @@ def generate_folium_map(storm_conf, df_fema=None, df_geo_area_to_render=None):
 	)
 
 	feature_group_storm_flood_exposure.add_child( storm_flood_layer )	
+
+
+
+
+
+
+
+	# build the FEMA layers
+
+
+	# build the feature_group_fema_damage layer
+
+
+	fema_damage_layer_colormap = branca.colormap.LinearColormap(colors=['#ffffff', '#ff0000', '#630000'], index=[1000, 1000000, 10100500],vmin=0,vmax=10100500)
+
+	def fema_damage_layer_style_function(feature):
+		storm_value = feature["properties"]['totalDamage_Summed'] #.isnull()
+
+	  #print(pre_storm_avg_admissions)
+
+		if (feature["properties"]['totalDamage_Summed'] is None):
+
+			return {
+				'fillColor': '#eeeeee', 
+				'color':'#000000', 
+				'fillOpacity': 0.4, 
+				'weight': 0.1
+				}
+		else:
+			# nothing really
+			a=0
+
+		float_value = float(storm_value)
+
+
+		return {
+			'fillColor': f'{fema_damage_layer_colormap.rgb_hex_str(float_value)}', 
+			'color':'#000000', 
+			'fillOpacity': 0.8, 
+			'weight': 0.1
+			}
+
+	fema_damage_highlight_function = lambda x: {'fillColor': '#000000', 
+		'color':'#000000', 
+		'fillOpacity': 0.50, 
+		'weight': 0.1}
+
+
+	fema_damage_layer = folium.features.GeoJson(
+		data=df_fema,
+		style_function=fema_damage_layer_style_function, 
+		control=True,
+		highlight_function=fema_damage_highlight_function, 
+		smooth_factor=0.1,
+		tooltip=folium.features.GeoJsonTooltip(
+			fields=['county', 'fips_code','totalDamage_Summed'],
+			aliases=['County: ', 'FIPS: ','FEMA Inspected Damage: '],
+			style=("background-color: white; color: #333333; font-family: arial; font-size: 12px; padding: 10px;") 
+		)
+	)
+
+	feature_group_fema_damage.add_child( fema_damage_layer )
+
 
 
 

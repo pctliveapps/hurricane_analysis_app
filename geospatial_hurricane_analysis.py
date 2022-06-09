@@ -50,6 +50,7 @@ print("Current Storm: " + current_storm['name'] + ' ' + str( current_storm['year
 
 strJSON_gdrive_path =  "./data/geo/georef-united-states-of-america-county.geojson"
 
+strFEMADamageData_path = "./data/fema/hurricane_damage_value_per_fips_code.csv"
 
 states = {"AL":"Alabama", "AK":"Alaska", "AZ":"Arizona", "AR":"Arkansas", "CA":"California", "CO":"Colorado", "CT":"Connecticut", 
           "DC":"Washington DC", "DE":"Delaware", "FL":"Florida", "GA":"Georgia", "HI":"Hawaii", "ID":"Idaho", "IL":"Illinois", 
@@ -114,5 +115,22 @@ df_geo_area_to_render = df_geo_storm[ df_geo_storm["ste_name"].isin( list_of_sta
 
 
 
-map_builder.generate_folium_map(current_storm, None, df_geo_area_to_render)
+# now load the fema damage data
+
+#print(df_geo.info())
+
+df_fema_damage_data = pd.read_csv( strFEMADamageData_path ) 
+
+df_fema_damage_data["fips_code"] = df_fema_damage_data["fips_code"].map(str)
+df_fema_damage_data["fips_code"] = df_fema_damage_data["fips_code"].str.zfill(5)
+
+# current_storm['name'] + ' ' + str( current_storm['year'] )
+only_storm_fema_damage_data = df_fema_damage_data[ (df_fema_damage_data["declarationTitle"] == "HURRICANE " + current_storm['name'].upper()) & (df_fema_damage_data["year"] == current_storm['year']) ]
+
+
+df_fema_damage_data_geo = df_geo.merge(only_storm_fema_damage_data, how="left", right_on=["fips_code"], left_on=["coty_code"])
+
+df_fema_area_to_render = df_fema_damage_data_geo[ df_fema_damage_data_geo["ste_name"].isin( list_of_states_to_load ) ]
+
+map_builder.generate_folium_map(current_storm, df_fema_area_to_render, df_geo_area_to_render)
 
