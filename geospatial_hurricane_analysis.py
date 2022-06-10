@@ -15,19 +15,22 @@ import geopandas as gpd
 storm_katrina = {
     'name': 'Katrina',
     'year': 2005,
-    'states': ["Louisiana", "Alabama", "Mississippi", "Arkansas", "Tennessee", "Kentucky"]
+    'states': ["Louisiana", "Alabama", "Mississippi", "Arkansas", "Tennessee", "Kentucky"],
+    'storm_center': [32.13176364136887, -91.50372022290216]
 }
 
 storm_michael = {
     'name': 'Michael',
     'year': 2018,
-    'states': ["Florida", "South Carolina", "North Carolina", "Georgia", "Alabama"]
+    'states': ["Florida", "South Carolina", "North Carolina", "Georgia", "Alabama", "Virginia"],
+    'storm_center': [32.869893106163026, -84.10818135318395]
 }
 
 storm_sandy = {
     'name': 'Sandy',
     'year': 2012,
-    'states': ["New York", "New Jersey"]
+    'states': ["New York", "New Jersey", "Delaware", "Maryland", "Pennsylvania", "Connecticut"],
+    'storm_center': [40.58370340594471, -74.12008933292537]
 }
 
 storms = []
