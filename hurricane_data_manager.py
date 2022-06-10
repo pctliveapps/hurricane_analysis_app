@@ -4,7 +4,7 @@ import time
 import geopandas as gpd
 import locale
 
-locale.setlocale( locale.LC_ALL, 'en_CA.UTF-8' )
+#locale.setlocale( locale.LC_ALL, 'en_CA.UTF-8' )
 
 
 def load_storm_configurations():
